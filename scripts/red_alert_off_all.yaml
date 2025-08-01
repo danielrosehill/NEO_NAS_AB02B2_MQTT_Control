@@ -1,0 +1,32 @@
+# Turn OFF Red Alert (Melody 15) - All Sirens
+# Copy to Home Assistant configuration.yaml under script:
+
+red_alert_off_all:
+  alias: "🛑 Red Alert OFF - All Sirens"
+  description: "Stop red alert on all sirens"
+  sequence:
+    # Turn OFF all sirens
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/living_room_siren/set"
+        payload: '{"alarm": false}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/patio_siren/set"
+        payload: '{"alarm": false}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/office_siren/set"
+        payload: '{"alarm": false}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/powderroom_siren/set"
+        payload: '{"alarm": false}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bedroom_siren/set"
+        payload: '{"alarm": false}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bathroom_siren/set"
+        payload: '{"alarm": false}'

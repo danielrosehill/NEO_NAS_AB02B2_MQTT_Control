@@ -1,0 +1,32 @@
+# Turn OFF Doorbell (Melody 12) - All Sirens
+# Copy to Home Assistant configuration.yaml under script:
+
+doorbell_off_all:
+  alias: "🛑 Doorbell OFF - All Sirens"
+  description: "Stop doorbell on all sirens"
+  sequence:
+    # Turn OFF all sirens
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/living_room_siren/set"
+        payload: '{"alarm": false}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/patio_siren/set"
+        payload: '{"alarm": false}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/office_siren/set"
+        payload: '{"alarm": false}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/powderroom_siren/set"
+        payload: '{"alarm": false}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bedroom_siren/set"
+        payload: '{"alarm": false}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bathroom_siren/set"
+        payload: '{"alarm": false}'

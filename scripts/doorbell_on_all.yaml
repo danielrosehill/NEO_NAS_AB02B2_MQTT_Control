@@ -1,0 +1,62 @@
+# Turn ON Doorbell (Melody 12) - All Sirens
+# Copy to Home Assistant configuration.yaml under script:
+
+doorbell_on_all:
+  alias: "🔔 Doorbell ON - All Sirens"
+  description: "Activate doorbell (melody 12) on all 6 sirens"
+  sequence:
+    # Step 1: Configure all sirens for doorbell
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/living_room_siren/set"
+        payload: '{"melody": 12, "volume": "medium"}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/patio_siren/set"
+        payload: '{"melody": 12, "volume": "medium"}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/office_siren/set"
+        payload: '{"melody": 12, "volume": "medium"}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/powderroom_siren/set"
+        payload: '{"melody": 12, "volume": "medium"}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bedroom_siren/set"
+        payload: '{"melody": 12, "volume": "low"}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bathroom_siren/set"
+        payload: '{"melody": 12, "volume": "medium"}'
+    
+    # Step 2: Wait for configuration
+    - delay:
+        seconds: 3
+    
+    # Step 3: Turn ON all sirens
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/living_room_siren/set"
+        payload: '{"alarm": true}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/patio_siren/set"
+        payload: '{"alarm": true}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/office_siren/set"
+        payload: '{"alarm": true}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/powderroom_siren/set"
+        payload: '{"alarm": true}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bedroom_siren/set"
+        payload: '{"alarm": true}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/bathroom_siren/set"
+        payload: '{"alarm": true}'
