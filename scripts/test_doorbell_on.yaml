@@ -1,0 +1,30 @@
+# TEST: Turn ON Doorbell (Melody 12) - Office & Patio Only
+# Copy to Home Assistant configuration.yaml under script:
+
+test_doorbell_on:
+  alias: "🧪 TEST Doorbell ON - Office & Patio"
+  description: "Test doorbell (melody 12) on office and patio sirens only"
+  sequence:
+    # Step 1: Configure test sirens for doorbell
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/office_siren/set"
+        payload: '{"melody": 12, "volume": "low"}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/patio_siren/set"
+        payload: '{"melody": 12, "volume": "low"}'
+    
+    # Step 2: Wait for configuration
+    - delay:
+        seconds: 3
+    
+    # Step 3: Turn ON test sirens
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/office_siren/set"
+        payload: '{"alarm": true}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/patio_siren/set"
+        payload: '{"alarm": true}'

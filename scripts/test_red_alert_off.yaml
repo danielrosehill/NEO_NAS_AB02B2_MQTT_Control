@@ -1,0 +1,16 @@
+# TEST: Turn OFF Red Alert (Melody 15) - Office & Patio Only
+# Copy to Home Assistant configuration.yaml under script:
+
+test_red_alert_off:
+  alias: "🧪 TEST Red Alert OFF - Office & Patio"
+  description: "Stop red alert on office and patio sirens"
+  sequence:
+    # Turn OFF test sirens
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/office_siren/set"
+        payload: '{"alarm": false}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/patio_siren/set"
+        payload: '{"alarm": false}'

@@ -1,0 +1,16 @@
+# TEST: Turn OFF Doorbell (Melody 12) - Office & Patio Only
+# Copy to Home Assistant configuration.yaml under script:
+
+test_doorbell_off:
+  alias: "🧪 TEST Doorbell OFF - Office & Patio"
+  description: "Stop doorbell on office and patio sirens"
+  sequence:
+    # Turn OFF test sirens
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/office_siren/set"
+        payload: '{"alarm": false}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/patio_siren/set"
+        payload: '{"alarm": false}'

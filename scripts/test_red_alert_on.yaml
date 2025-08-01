@@ -1,0 +1,30 @@
+# TEST: Turn ON Red Alert (Melody 15) - Office & Patio Only
+# Copy to Home Assistant configuration.yaml under script:
+
+test_red_alert_on:
+  alias: "🧪 TEST Red Alert ON - Office & Patio"
+  description: "Test red alert (melody 15) on office and patio sirens only"
+  sequence:
+    # Step 1: Configure test sirens for red alert
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/office_siren/set"
+        payload: '{"melody": 15, "volume": "low"}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/patio_siren/set"
+        payload: '{"melody": 15, "volume": "low"}'
+    
+    # Step 2: Wait for configuration
+    - delay:
+        seconds: 3
+    
+    # Step 3: Turn ON test sirens
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/office_siren/set"
+        payload: '{"alarm": true}'
+    - service: mqtt.publish
+      data:
+        topic: "zigbee2mqtt/patio_siren/set"
+        payload: '{"alarm": true}'
