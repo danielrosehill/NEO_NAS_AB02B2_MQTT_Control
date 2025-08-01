@@ -1,0 +1,255 @@
+# NEO NAS-AB02B2 Zigbee Siren - Home Assistant Scripts
+# Copy these scripts to your configuration.yaml under the 'script:' section
+# Update device names to match your Zigbee2MQTT setup
+
+script:
+  # =================================================================
+  # DOORBELL SCENARIO - Melody 18 (Ding Dong)
+  # =================================================================
+  doorbell_activate:
+    alias: "🔔 Activate Doorbell"
+    description: "Play doorbell sound on all sirens"
+    sequence:
+      # Step 1: Configure all sirens for doorbell
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/living_room_siren/set"
+          payload: '{"melody": 18, "volume": "medium"}'
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/office_siren/set"
+          payload: '{"melody": 18, "volume": "medium"}'
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/bedroom_siren/set"
+          payload: '{"melody": 18, "volume": "low"}'
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/kitchen_siren/set"
+          payload: '{"melody": 18, "volume": "medium"}'
+      # Add your other sirens here
+      
+      # Step 2: Wait for configuration to take effect
+      - delay:
+          seconds: 3
+          
+      # Step 3: Trigger doorbell on all sirens
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/living_room_siren/set"
+          payload: '{"alarm": true}'
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/office_siren/set"
+          payload: '{"alarm": true}'
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/bedroom_siren/set"
+          payload: '{"alarm": true}'
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/kitchen_siren/set"
+          payload: '{"alarm": true}'
+      
+      # Step 4: Auto-stop after 5 seconds
+      - delay:
+          seconds: 5
+      - service: script.sirens_stop
+
+  # =================================================================
+  # SECURITY ALARM SCENARIO - Melody 6 (Alarm)
+  # =================================================================
+  security_alarm_activate:
+    alias: "🚨 Activate Security Alarm"
+    description: "Trigger high-volume security alarm on all sirens"
+    sequence:
+      # Step 1: Configure all sirens for security alarm
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/living_room_siren/set"
+          payload: '{"melody": 6, "volume": "high"}'
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/office_siren/set"
+          payload: '{"melody": 6, "volume": "high"}'
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/bedroom_siren/set"
+          payload: '{"melody": 6, "volume": "high"}'
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/kitchen_siren/set"
+          payload: '{"melody": 6, "volume": "high"}'
+      
+      # Step 2: Wait for configuration to take effect
+      - delay:
+          seconds: 3
+          
+      # Step 3: Trigger security alarm (no auto-stop for security)
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/living_room_siren/set"
+          payload: '{"alarm": true}'
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/office_siren/set"
+          payload: '{"alarm": true}'
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/bedroom_siren/set"
+          payload: '{"alarm": true}'
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/kitchen_siren/set"
+          payload: '{"alarm": true}'
+
+  # =================================================================
+  # GENTLE NOTIFICATION SCENARIO - Melody 12 (Chime)
+  # =================================================================
+  gentle_notification_activate:
+    alias: "🔔 Activate Gentle Notification"
+    description: "Play gentle chime for notifications"
+    sequence:
+      # Step 1: Configure sirens for gentle chime (only main areas)
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/living_room_siren/set"
+          payload: '{"melody": 12, "volume": "low"}'
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/office_siren/set"
+          payload: '{"melody": 12, "volume": "low"}'
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/kitchen_siren/set"
+          payload: '{"melody": 12, "volume": "low"}'
+      # Note: Excluding bedroom for gentle notifications
+      
+      # Step 2: Wait for configuration to take effect
+      - delay:
+          seconds: 3
+          
+      # Step 3: Trigger gentle notification
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/living_room_siren/set"
+          payload: '{"alarm": true}'
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/office_siren/set"
+          payload: '{"alarm": true}'
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/kitchen_siren/set"
+          payload: '{"alarm": true}'
+      
+      # Step 4: Auto-stop after 8 seconds
+      - delay:
+          seconds: 8
+      - service: script.sirens_stop
+
+  # =================================================================
+  # CLOCK CHIME SCENARIO - Melody 15 (Clock Chime)
+  # =================================================================
+  clock_chime_activate:
+    alias: "🕐 Activate Clock Chime"
+    description: "Play clock chime for time notifications"
+    sequence:
+      # Step 1: Configure for clock chime (only main areas)
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/living_room_siren/set"
+          payload: '{"melody": 15, "volume": "low"}'
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/office_siren/set"
+          payload: '{"melody": 15, "volume": "low"}'
+      
+      # Step 2: Wait for configuration to take effect
+      - delay:
+          seconds: 3
+          
+      # Step 3: Trigger clock chime
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/living_room_siren/set"
+          payload: '{"alarm": true}'
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/office_siren/set"
+          payload: '{"alarm": true}'
+      
+      # Step 4: Auto-stop after 6 seconds
+      - delay:
+          seconds: 6
+      - service: script.sirens_stop
+
+  # =================================================================
+  # EMERGENCY STOP - Stop All Sirens
+  # =================================================================
+  sirens_stop:
+    alias: "🛑 Stop All Sirens"
+    description: "Immediately stop all siren alarms"
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/living_room_siren/set"
+          payload: '{"alarm": false}'
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/office_siren/set"
+          payload: '{"alarm": false}'
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/bedroom_siren/set"
+          payload: '{"alarm": false}'
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/kitchen_siren/set"
+          payload: '{"alarm": false}'
+      # Add your other sirens here
+
+  # =================================================================
+  # SINGLE ROOM SCENARIOS (Examples)
+  # =================================================================
+  office_doorbell:
+    alias: "🔔 Office Doorbell Only"
+    description: "Play doorbell only in office"
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/office_siren/set"
+          payload: '{"melody": 18, "volume": "medium"}'
+      - delay:
+          seconds: 3
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/office_siren/set"
+          payload: '{"alarm": true}'
+      - delay:
+          seconds: 5
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/office_siren/set"
+          payload: '{"alarm": false}'
+
+  bedroom_gentle_wake:
+    alias: "🌅 Bedroom Gentle Wake"
+    description: "Gentle wake-up chime in bedroom only"
+    sequence:
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/bedroom_siren/set"
+          payload: '{"melody": 12, "volume": "low"}'
+      - delay:
+          seconds: 3
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/bedroom_siren/set"
+          payload: '{"alarm": true}'
+      - delay:
+          seconds: 10
+      - service: mqtt.publish
+        data:
+          topic: "zigbee2mqtt/bedroom_siren/set"
+          payload: '{"alarm": false}'

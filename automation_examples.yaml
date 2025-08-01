@@ -1,0 +1,291 @@
+# NEO NAS-AB02B2 Zigbee Siren - Home Assistant Automation Examples
+# Copy these automations to your configuration.yaml under the 'automation:' section
+# Update entity names to match your Home Assistant setup
+
+automation:
+  # =================================================================
+  # DOORBELL AUTOMATIONS
+  # =================================================================
+  - alias: "Doorbell Pressed - Front Door"
+    description: "Play doorbell when front door button is pressed"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.front_door_button
+        to: "on"
+    action:
+      - service: script.doorbell_activate
+
+  - alias: "Doorbell Pressed - Back Door"
+    description: "Play doorbell when back door button is pressed"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.back_door_button
+        to: "on"
+    action:
+      - service: script.doorbell_activate
+
+  # =================================================================
+  # SECURITY ALARM AUTOMATIONS
+  # =================================================================
+  - alias: "Security System Triggered"
+    description: "Activate siren when security system is triggered"
+    trigger:
+      - platform: state
+        entity_id: alarm_control_panel.home_alarm
+        to: "triggered"
+    action:
+      - service: script.security_alarm_activate
+
+  - alias: "Motion Detected - Armed Away"
+    description: "Trigger alarm when motion detected while armed away"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.living_room_motion
+        to: "on"
+    condition:
+      - condition: state
+        entity_id: alarm_control_panel.home_alarm
+        state: "armed_away"
+    action:
+      - service: script.security_alarm_activate
+
+  - alias: "Door Opened - Armed Home"
+    description: "Trigger alarm when door opened while armed home"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.front_door
+        to: "on"
+    condition:
+      - condition: state
+        entity_id: alarm_control_panel.home_alarm
+        state: "armed_home"
+    action:
+      - service: script.security_alarm_activate
+
+  # =================================================================
+  # TIME-BASED CHIMES
+  # =================================================================
+  - alias: "Hourly Clock Chime"
+    description: "Play clock chime every hour during daytime"
+    trigger:
+      - platform: time_pattern
+        minutes: 0
+    condition:
+      - condition: time
+        after: "08:00:00"
+        before: "22:00:00"
+      - condition: state
+        entity_id: input_boolean.clock_chimes_enabled
+        state: "on"
+    action:
+      - service: script.clock_chime_activate
+
+  - alias: "Lunch Time Chime"
+    description: "Gentle reminder for lunch time"
+    trigger:
+      - platform: time
+        at: "12:00:00"
+    condition:
+      - condition: state
+        entity_id: binary_sensor.workday_sensor
+        state: "on"
+    action:
+      - service: script.gentle_notification_activate
+
+  # =================================================================
+  # NOTIFICATION AUTOMATIONS
+  # =================================================================
+  - alias: "Laundry Finished"
+    description: "Gentle chime when laundry is finished"
+    trigger:
+      - platform: state
+        entity_id: sensor.washing_machine_status
+        to: "finished"
+    action:
+      - service: script.gentle_notification_activate
+
+  - alias: "Dishwasher Finished"
+    description: "Gentle chime when dishwasher is finished"
+    trigger:
+      - platform: state
+        entity_id: sensor.dishwasher_status
+        to: "finished"
+    action:
+      - service: script.gentle_notification_activate
+
+  - alias: "Dryer Finished"
+    description: "Gentle chime when dryer is finished"
+    trigger:
+      - platform: state
+        entity_id: sensor.dryer_status
+        to: "finished"
+    action:
+      - service: script.gentle_notification_activate
+
+  - alias: "Important Guest Arriving"
+    description: "Special doorbell for VIP guests"
+    trigger:
+      - platform: state
+        entity_id: person.important_guest
+        to: "home"
+    action:
+      - service: script.doorbell_activate
+      - delay:
+          seconds: 10
+      - service: script.gentle_notification_activate
+
+  # =================================================================
+  # EMERGENCY AND SAFETY AUTOMATIONS
+  # =================================================================
+  - alias: "Fire Alarm Triggered"
+    description: "Activate all sirens when fire alarm is triggered"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.smoke_detector_living_room
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.smoke_detector_kitchen
+        to: "on"
+    action:
+      - service: script.security_alarm_activate
+
+  - alias: "Water Leak Detected"
+    description: "Alert when water leak is detected"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.water_leak_kitchen
+        to: "on"
+      - platform: state
+        entity_id: binary_sensor.water_leak_bathroom
+        to: "on"
+    action:
+      - service: script.gentle_notification_activate
+      - delay:
+          seconds: 15
+      - service: script.gentle_notification_activate
+
+  - alias: "Emergency Stop Button"
+    description: "Stop all sirens when emergency button is pressed"
+    trigger:
+      - platform: state
+        entity_id: input_button.emergency_stop_sirens
+    action:
+      - service: script.sirens_stop
+
+  # =================================================================
+  # SMART HOME INTEGRATION AUTOMATIONS
+  # =================================================================
+  - alias: "Package Delivered"
+    description: "Doorbell chime when package is delivered"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.front_door_package
+        to: "on"
+    action:
+      - service: script.doorbell_activate
+
+  - alias: "Garage Door Left Open"
+    description: "Gentle reminder if garage door left open"
+    trigger:
+      - platform: state
+        entity_id: cover.garage_door
+        to: "open"
+        for:
+          minutes: 30
+    action:
+      - service: script.gentle_notification_activate
+
+  - alias: "Bedtime Reminder"
+    description: "Gentle chime for bedtime routine"
+    trigger:
+      - platform: time
+        at: "22:00:00"
+    condition:
+      - condition: state
+        entity_id: input_boolean.bedtime_reminders
+        state: "on"
+    action:
+      - service: script.gentle_notification_activate
+
+  - alias: "Morning Wake Up"
+    description: "Gentle wake up chime (bedroom only)"
+    trigger:
+      - platform: time
+        at: "07:00:00"
+    condition:
+      - condition: state
+        entity_id: binary_sensor.workday_sensor
+        state: "on"
+      - condition: state
+        entity_id: input_boolean.morning_chimes
+        state: "on"
+    action:
+      - service: script.bedroom_gentle_wake
+
+  # =================================================================
+  # CONDITIONAL AUTOMATIONS
+  # =================================================================
+  - alias: "Doorbell - Quiet Hours"
+    description: "Gentle doorbell during quiet hours"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.front_door_button
+        to: "on"
+    condition:
+      - condition: or
+        conditions:
+          - condition: time
+            after: "22:00:00"
+          - condition: time
+            before: "08:00:00"
+    action:
+      - service: script.gentle_notification_activate
+
+  - alias: "Security Alarm - Home Mode"
+    description: "Gentle alarm when home (not full security alarm)"
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.window_sensor
+        to: "on"
+    condition:
+      - condition: state
+        entity_id: alarm_control_panel.home_alarm
+        state: "armed_home"
+      - condition: time
+        after: "23:00:00"
+        before: "06:00:00"
+    action:
+      - service: script.gentle_notification_activate
+      - delay:
+          seconds: 30
+      - condition: state
+        entity_id: binary_sensor.window_sensor
+        state: "on"
+      - service: script.security_alarm_activate
+
+  # =================================================================
+  # DASHBOARD BUTTON AUTOMATIONS
+  # =================================================================
+  - alias: "Test Doorbell Button"
+    description: "Test doorbell from dashboard"
+    trigger:
+      - platform: state
+        entity_id: input_button.test_doorbell
+    action:
+      - service: script.doorbell_activate
+
+  - alias: "Test Gentle Chime Button"
+    description: "Test gentle chime from dashboard"
+    trigger:
+      - platform: state
+        entity_id: input_button.test_gentle_chime
+    action:
+      - service: script.gentle_notification_activate
+
+  - alias: "Test Clock Chime Button"
+    description: "Test clock chime from dashboard"
+    trigger:
+      - platform: state
+        entity_id: input_button.test_clock_chime
+    action:
+      - service: script.clock_chime_activate
